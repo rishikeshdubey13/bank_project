@@ -1,0 +1,8 @@
+**/Notes.txt
+.env
+*.key
+*.pem
+__pycache__/
+venv/
+.vscode/
+.idea/

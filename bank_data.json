@@ -1,0 +1,52 @@
+{
+    "31028384": {
+        "account_number": 31028384,
+        "name": "Haikyuu",
+        "balance": 0,
+        "transactions": []
+    },
+    "48850026": {
+        "account_number": 48850026,
+        "name": "Zomps",
+        "balance": 60.0,
+        "transactions": [
+            {
+                "amount": 100.0,
+                "type": "Deposit",
+                "time": "2025-12-11 14:45:06"
+            },
+            {
+                "amount": 20.0,
+                "type": "Withdraw",
+                "time": "2025-12-11 14:45:20"
+            },
+            {
+                "amount": 20.0,
+                "type": "Transfer to 58458332",
+                "time": "2025-12-11 23:25:21"
+            }
+        ]
+    },
+    "58458332": {
+        "account_number": 58458332,
+        "name": "Tanaka",
+        "balance": 180.0,
+        "transactions": [
+            {
+                "amount": 200.0,
+                "type": "Deposit",
+                "time": "2025-12-11 17:44:59"
+            },
+            {
+                "amount": 40.0,
+                "type": "Withdraw",
+                "time": "2025-12-11 17:45:32"
+            },
+            {
+                "amount": 20.0,
+                "type": "Transfer from 48850026",
+                "time": "2025-12-11 23:25:21"
+            }
+        ]
+    }
+}

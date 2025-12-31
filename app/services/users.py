@@ -1,5 +1,6 @@
 import psycopg2
-from app.utils import hash_password, verify_password
+from app.utils import hash_password, verify_password, create_refresh_token, hash_token
+from datetime import datetime, timedelta, timezone
 
 class Users:
     def __init__(self, db):
@@ -59,12 +60,17 @@ class Users:
     def login_user(self, email, password):
         try:
             user = self.db.check_user(email)
-            if not user:
-               raise ValueError("Invalid email or password")
-           
-            if not verify_password(password, user['password_hash']):
+            if not user or not verify_password(password, user['password_hash']):
                 raise ValueError("Invalid email or password")
-            return self.serialize_user(user)
+            
+            raw_refresh_token = create_refresh_token()
+            token_hash = hash_token(raw_refresh_token)
+            expires_at = datetime.now(timezone.utc) + timedelta(days=7)
+
+            self.db.create_refresh_token(user['id'], token_hash, expires_at)
+            self.db.commit()
+
+            return self.serialize_user(user), raw_refresh_token
         except psycopg2.Error:
             raise RuntimeError("Database error occurred")
 
@@ -78,3 +84,6 @@ class Users:
 #Edit-users
 
 #delete-users
+# so whenever i login i need to generate new refresh and acces token, and save the 
+# refresh token in DB when access token expire create new referesh token and access token.
+#

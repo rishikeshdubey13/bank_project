@@ -4,15 +4,11 @@ from fastapi import HTTPException, Depends, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
 from app.config import settings
+import hashlib
+import secrets
 
 
-
-# #Configuration
-# SECRET_KEY = "your_super_secret_key"
-# ALGORITHM = "HS256"
-# ACCESS_TOKN_EXPIRE_MINUTES = 30
-
-oauth_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
+oauth_scheme = OAuth2PasswordBearer(tokenUrl="/users/login")
 
 def hash_password(password:str) -> str:
     pwd_bytes = password.encode('utf-8')
@@ -48,3 +44,10 @@ def get_current_user(token: str = Depends(oauth_scheme)):
         return user_id
     except JWTError:
         raise credentials_exception
+
+def create_refresh_token():
+    return secrets.token_urlsafe(32)
+
+def hash_token(token:str):
+    return hashlib.sha256(token.encode()).hexdigest()
+

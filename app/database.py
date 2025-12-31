@@ -115,6 +115,25 @@ class Database:
 
 
 
+    def create_refresh_token(self, user_id, token_hash, expires_at):
+        query = """
+        INSERT INTO refresh_tokens(user_id, token_hash, expires_at)
+        VALUES (%s, %s, %s)
+        RETURNING id; 
+        """
+        result = self.execute(query, (user_id, token_hash, expires_at))
+        return result
+
+    def get_refresh_token_by_hash(self, token_hash):
+        query = "SELECT * FROM refresh_tokens WHERE token_hash = %s"
+        result = self.execute(query, (token_hash,), fetch= True)
+        return result[0] if result else None
+    
+    def delete_refresh_token(self, token_hash):
+        query =  "DELETE FROM refresh_token WHERE token_hash = %s"
+        row_count= self.execute(query, (token_hash,), return_rowcount=True)
+        return row_count > 0
+
     # def begin(self):
     #     self.conn.cursor().execute('BEGIN')
     

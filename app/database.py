@@ -109,11 +109,11 @@ class Database:
     
         
     def delete_user(self, email):
-        query =  "DELETE FROM users WHERE emial = %s"
+        query =  "DELETE FROM users WHERE email = %s"
         row_count = self.execute(query,  (email,), return_rowcount=True)
         return row_count > 0
 
-
+ #------refresh_tokens------
 
     def create_refresh_token(self, user_id, token_hash, expires_at):
         query = """
@@ -130,14 +130,16 @@ class Database:
         return result[0] if result else None
     
     def delete_refresh_token(self, token_hash):
-        query =  "DELETE FROM refresh_token WHERE token_hash = %s"
+        query =  "DELETE FROM refresh_tokens WHERE token_hash = %s"
         row_count= self.execute(query, (token_hash,), return_rowcount=True)
         return row_count > 0
+    
+    def revoke_all_refresh_tokens(self, token_hash):
+        query = "UPDATE refresh_tokens SET revoked = true WHERE token_hash= %s"
+        self.execute(query, (token_hash,))
+        
 
     # def begin(self):
     #     self.conn.cursor().execute('BEGIN')
     
   
-
-    
-   

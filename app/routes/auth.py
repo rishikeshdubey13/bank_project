@@ -22,19 +22,22 @@ def login_user(user:UserCreate, users: Users = Depends(get_users)):
     return {"access_token":access_token, "refresh_token": refresh_token, "token_type": "bearer"}
 
 @router.post("/refresh", response_model=TokenRepsone)
-def refresh_acces_token(refresh: RefreshRequest, users: Users =Depends(get_users)):
-    incoming_hash = hash_token(refresh.refresh_token)
-
+def refresh_acces_token(data: RefreshRequest, users: Users =Depends(get_users)):
+    incoming_hash = hash_token(data.refresh_token)
     token_data= users.db.get_refresh_token_by_hash(incoming_hash)
 
-    if not token_data or token_data['expires_at'] < datetime.now(timezone.utc):
-        raise HTTPException(status_code=401, detail="Refresh token expired or invalid")
+    #revoked logic
+    if not token_data or token_data.get('revoked') or token_data['expires_at'] < datetime.now(timezone.utc):
+        raise HTTPException(status_code=401, detail="Refresh token expired, invalid or revoked")
+
+    # if not token_data or token_data['expires_at'] < datetime.now(timezone.utc):
+    #     raise HTTPException(status_code=401, detail="Refresh token expired or invalid")
     
     #Rotation logic:
     users.db.delete_refresh_token(incoming_hash)
 
     #Generate new pair(refresh and access)
-    user_id = token_data['user_d']
+    user_id = token_data['user_id']
     new_access_token  = create_access_token(data= {"sub":str(user_id)})
     new_refresh_raw = create_refresh_token()
 
@@ -51,3 +54,8 @@ def refresh_acces_token(refresh: RefreshRequest, users: Users =Depends(get_users
     }
 
 
+@router.post("/logout")
+def logout(data: RefreshRequest, users: Users =Depends(get_users)):
+    incoming_hash = hash_token(data.refresh_token)
+    users.db.revoke_all_refresh_tokens(incoming_hash)
+    users.db.commit()

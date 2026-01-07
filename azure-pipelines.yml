@@ -1,0 +1,24 @@
+trigger:
+- main
+
+pool:
+ name: bank-pool
+
+steps:
+- checkout: self
+
+- task: UsePythonVersion0@
+  inputs: 
+    versionSpec: '3.13'
+  displayName: Use Python 3.13
+
+- script: |
+   python -m pip install --upgrade pip
+   pip install -r requirements.txt
+  displayName: Install dependencies
+
+- script: |
+   pytest -v
+  displayName: Run tests
+
+	

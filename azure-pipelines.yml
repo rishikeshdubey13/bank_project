@@ -30,6 +30,6 @@ steps:
       testResultsFormat: "JUnit"
       testResultFiles: "test-results.xml"
       failTaskonFailedtests: True
-    displayname: Publish Test resutls
+    displayName: Publish Test resutls
   
 

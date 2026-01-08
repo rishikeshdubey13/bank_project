@@ -6,7 +6,7 @@ from app.main import app
 def client():
     return TestClient(app)
 
-@pytest.mark.db
+
 @pytest.fixture
 def authorized_client(client):
     response = client.post(

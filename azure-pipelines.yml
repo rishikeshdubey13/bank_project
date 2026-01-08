@@ -25,11 +25,11 @@ steps:
       python3 -m pytest -m 'not db' --junitxml=test-results.xml
     displayName: Run tests (skip DB)
 
-  - task : PublishTestresult@2
+  - task: PublishTestResults@2
     inputs:
       testResultsFormat: "JUnit"
-      testResultFiles: "test-results.xml"
-      failTaskonFailedtests: True
-    displayName: Publish Test resutls
+      testResultsFiles: "test-results.xml"
+      failTaskOnFailedTests: true
+    displayName: Publish test results
   
 

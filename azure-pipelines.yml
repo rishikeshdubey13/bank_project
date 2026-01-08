@@ -35,6 +35,9 @@ steps:
     displayName: Publish unit test results
 
 
+  - script: |
+      docker rm -f ci-postgres || true
+    displayName: Remove existing PostgreSQL container
 
 # --- Start postgres -----
 
@@ -64,12 +67,12 @@ steps:
       export DB_USER=testuser
       export DB_PASSWORD=testpass
       export DB_NAME=testdb
+
       python3 app/database.py
       python3 -m pytest tests -v -m "db" --junitxml=db-test-results.xml || true
     displayName: Run DB integration tests
 
   
-
   - task: PublishTestResults@2
     inputs:
       testResultsFormat: "JUnit"
@@ -80,5 +83,6 @@ steps:
   
   - script: |
       docker rm -f ci-postgres || true
-    displayName: Cleanup PostgreSQL
+    displayName: Remove existing PostgreSQL container
+    condition: always()
 

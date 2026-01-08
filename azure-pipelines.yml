@@ -22,5 +22,14 @@ steps:
 
   - script: |
       export PYTHONPATH=$(pwd)
-      python3 -m pytest -m 'not db'
+      python3 -m pytest -m 'not db' --junitxml=test-results.xml
     displayName: Run tests (skip DB)
+
+  - task : PublishTestresult@2
+    inputs:
+      testResultsFormat: "JUnit"
+      testResultFiles: "test-results.xml"
+      failTaskonFailedtests: True
+    displayname: Publish Test resutls
+  
+

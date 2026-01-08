@@ -1,3 +1,4 @@
+@pytest.mark.db
 def test_desposit_money(authorized_client):
     desposit_amount =  200.0
     response = authorized_client.post(
@@ -9,7 +10,7 @@ def test_desposit_money(authorized_client):
     assert "balance" in data
     # assert float(data["balance"]) == 100.0
     assert data["message"] == "Deposit successful"
-
+@pytest.mark.db
 def test_withdraw_money(authorized_client):
     withdraw_amount = 100
     response = authorized_client.post(
@@ -21,7 +22,7 @@ def test_withdraw_money(authorized_client):
     assert "balance" in data
     assert data["message"] == "Withdraw successfull"
 
-
+@pytest.mark.db
 def test_transfer_money(authorized_client):
     transfer_money = 100
     response = authorized_client.post(

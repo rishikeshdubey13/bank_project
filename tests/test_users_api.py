@@ -7,7 +7,7 @@
 #     assert response.status_code == 201
 #     assert response.json()["email"] == "new_user1@test.com"
 
-
+@pytest.mark.db
 def test_login_user(client):
     response = client.post(
         "/users/login",
@@ -22,7 +22,7 @@ def test_login_user(client):
     # there is not need for email as user already enter the email in the frontent. 
     # Dont need to return it back
 
-
+@pytest.mark.db
 def test_logout_and_token_revocation(client):
     # 1. Login to get a valid refresh token
     login_response = client.post(

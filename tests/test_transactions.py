@@ -1,3 +1,6 @@
+
+import pytest
+
 @pytest.mark.db
 def test_desposit_money(authorized_client):
     desposit_amount =  200.0

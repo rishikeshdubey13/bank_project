@@ -45,7 +45,7 @@ steps:
         -e POSTGRES_PASSWORD=testpass \
         -e POSTGRES_DB=testdb \
         -p 5432:5432 \
-        postgres:15
+        postgres:14
     displayName: Start PostgreSQL
 
   - script: |

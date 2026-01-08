@@ -7,10 +7,13 @@ pool:
 steps:
   - checkout: self
 
-  - task: UsePythonVersion@0
-    inputs:
-      versionSpec: "3.10"
-    displayName: Use Python 3.10
+  # - task: UsePythonVersion@0
+  #   inputs:
+  #     versionSpec: "3.10"
+  #   displayName: Use Python 3.10
+  - script: |
+      python3 --version
+    displayName: Verify Python
 
   - script: |
       python -m pip install --upgrade pip
@@ -18,5 +21,5 @@ steps:
     displayName: Install dependencies
 
   - script: |
-      pytest -v
+      python3 -m pytest -v
     displayName: Run tests

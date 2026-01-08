@@ -1,24 +1,22 @@
 trigger:
-- main
+  - main
 
 pool:
- name: bank-pool
+  name: bank-pool
 
 steps:
-- checkout: self
+  - checkout: self
 
-- task: UsePythonVersion0@
-  inputs: 
-    versionSpec: '3.13'
-  displayName: Use Python 3.13
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: "3.10"
+    displayName: Use Python 3.10
 
-- script: |
-    python -m pip install --upgrade pip
-    pip install -r requirements.txt
-  displayName: Install dependencies
+  - script: |
+      python -m pip install --upgrade pip
+      pip install -r requirements.txt
+    displayName: Install dependencies
 
-- script: |
-    pytest -v
-  displayName: Run tests
-
-	
+  - script: |
+      pytest -v
+    displayName: Run tests

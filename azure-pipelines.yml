@@ -16,10 +16,11 @@ steps:
     displayName: Verify Python
 
   - script: |
-      python -m pip install --upgrade pip
+      python3 -m pip install --upgrade pip
       pip install -r requirements.txt
     displayName: Install dependencies
 
+# ---UNit test ----
   - script: |
       export PYTHONPATH=$(pwd)
       python3 -m pytest tests -v -m "not db" --junitxml=test-results.xml || true
@@ -29,7 +30,55 @@ steps:
     inputs:
       testResultsFormat: "JUnit"
       testResultsFiles: "test-results.xml"
+      testRunTitle: "Unit Tests"
       failTaskOnFailedTests: true
-    displayName: Publish test results
+    displayName: Publish unit test results
+
+
+
+# --- Start postgres -----
+
+  - script: |
+      docker run -d \
+        --name ci-postgres \
+        -e POSTGRES_USER=testuser \
+        -e POSTGRES_PASSWORD=testpass \
+        -e POSTGRES_DB=testdb \
+        -p 5432:5432 \
+        postgres:15
+    displayName: Start PostgreSQL
+
+  - script: |
+      echo "Waiting for PostgreSQL to be ready..."
+      for i in {1..10}; do
+        docker exec ci-postgres pg_isready && break
+        sleep 2
+      done
+    displayName: Wait for PostgreSQL
+
   
+  - script: |
+      export PYTHONPATH=$(pwd)
+      export DB_HOST=localhost
+      export DB_PORT=5432
+      export DB_USER=testuser
+      export DB_PASSWORD=testpass
+      export DB_NAME=testdb
+
+      python3 -m pytest tests -v -m "db" --junitxml=db-test-results.xml || true
+    displayName: Run DB integration tests
+
+  
+
+  - task: PublishTestResults@2
+    inputs:
+      testResultsFormat: "JUnit"
+      testResultsFiles: "db-test-results.xml"
+      testRunTitle: "PostgreSQL Integration Tests"
+      failTaskOnFailedTests: true
+    displayName: Publish DB test results
+  
+  - script: |
+      docker rm -f ci-postgres || true
+    displayName: Cleanup PostgreSQL
 

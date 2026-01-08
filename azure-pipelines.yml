@@ -22,5 +22,5 @@ steps:
 
   - script: |
       export PYTHONPATH=$(pwd)
-      python3 -m pytest -v "not db"
+      python3 -m pytest -m 'not db'
     displayName: Run tests (skip DB)

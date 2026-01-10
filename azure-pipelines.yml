@@ -61,15 +61,21 @@ steps:
 
   # Initialize database schema (creates tables)
   - script: |
-      export PYTHONPATH=$(pwd)
-      export DB_HOST=localhost
-      export DB_PORT=5433
-      export DB_USER=testuser
-      export DB_PASSWORD=testpass
-      export DB_NAME=testdb
-
-      python3 app/database.py
+      docker exec -i ci-postgres psql \
+        -U testuser \
+        -d testdb \
+        < db/schema.sql
     displayName: Initialize database schema
+  # - script: |
+  #     export PYTHONPATH=$(pwd)
+  #     export DB_HOST=localhost
+  #     export DB_PORT=5433
+  #     export DB_USER=testuser
+  #     export DB_PASSWORD=testpass
+  #     export DB_NAME=testdb
+
+  #     python3 app/database.py
+  #   displayName: Initialize database schema
 
 
 # Run DB integration tests

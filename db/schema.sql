@@ -1,0 +1,35 @@
+-- USERS
+CREATE TABLE IF NOT EXISTS users (
+    id SERIAL PRIMARY KEY,
+    email TEXT UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL,
+    role TEXT NOT NULL
+);
+
+-- ACCOUNTS
+CREATE TABLE IF NOT EXISTS accounts (
+    id SERIAL PRIMARY KEY,
+    account_number BIGINT UNIQUE NOT NULL,
+    name TEXT NOT NULL,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    balance NUMERIC NOT NULL DEFAULT 0
+);
+
+-- TRANSACTIONS
+CREATE TABLE IF NOT EXISTS transactions (
+    id SERIAL PRIMARY KEY,
+    account_number BIGINT REFERENCES accounts(account_number),
+    amount NUMERIC NOT NULL,
+    type TEXT NOT NULL,
+    time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- REFRESH TOKENS
+CREATE TABLE IF NOT EXISTS refresh_tokens (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    token_hash TEXT NOT NULL,
+    expires_at TIMESTAMP NOT NULL,
+    revoked BOOLEAN DEFAULT FALSE
+);
+

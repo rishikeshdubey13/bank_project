@@ -41,12 +41,14 @@ steps:
     displayName: Remove existing PostgreSQL container
 
   - script: |
+      docker rm -f ci-postgres || true
       docker run -d \
         --name ci-postgres \
         -e POSTGRES_USER=testuser \
         -e POSTGRES_PASSWORD=testpass \
         -e POSTGRES_DB=testdb \
-        postgres:17
+        -p 127.0.0.1:5433:5432 \
+        postgres:15
     displayName: Start PostgreSQL
 
   - script: |
@@ -60,8 +62,8 @@ steps:
   # Initialize database schema (creates tables)
   - script: |
       export PYTHONPATH=$(pwd)
-      export DB_HOST=ci-postgres
-      export DB_PORT=5432
+      export DB_HOST=localhost
+      export DB_PORT=5433
       export DB_USER=testuser
       export DB_PASSWORD=testpass
       export DB_NAME=testdb
@@ -73,8 +75,8 @@ steps:
 # Run DB integration tests
   - script: |
       export PYTHONPATH=$(pwd)
-      export DB_HOST=ci-postgres
-      export DB_PORT=5432
+      export DB_HOST=localhost
+      export DB_PORT=5433
       export DB_USER=testuser
       export DB_PASSWORD=testpass
       export DB_NAME=testdb

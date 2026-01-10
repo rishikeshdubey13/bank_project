@@ -6,3 +6,4 @@ httpx
 bcrypt
 python-jose
 python-dotenv
+pydantic[email]

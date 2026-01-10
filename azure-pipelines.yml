@@ -59,6 +59,7 @@ steps:
 
   # Initialize database schema (creates tables)
   - script: |
+      export PYTHONPATH=$(pwd)
       export DB_HOST=ci-postgres
       export DB_PORT=5432
       export DB_USER=testuser

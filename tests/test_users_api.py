@@ -1,5 +1,6 @@
 import pytest
 
+@pytest.mark.db
 def test_register_user(client):
     response = client.post(
         "/users/register",

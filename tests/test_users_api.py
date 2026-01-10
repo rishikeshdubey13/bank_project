@@ -4,17 +4,17 @@ import pytest
 def test_register_user(client):
     response = client.post(
         "/users/register",
-        json={"email": "new_user1@test.com", "password": "pass123"}
+        json={"email": "new_user2@test.com", "password": "pass123"}
     )
 
     assert response.status_code == 201
-    assert response.json()["email"] == "new_user1@test.com"
+    assert response.json()["email"] == "new_user2@test.com"
 
 @pytest.mark.db
 def test_login_user(client):
     response = client.post(
         "/users/login",
-        json = {"email": "new_user@test.com", "password": "pass123"}
+        json = {"email": "new_user2@test.com", "password": "pass123"}
     )
     data = response.json()
     assert response.status_code == 200
@@ -30,7 +30,7 @@ def test_logout_and_token_revocation(client):
     # 1. Login to get a valid refresh token
     login_response = client.post(
         "/users/login",
-        json={"email": "new_user@test.com", "password": "pass123"}
+        json={"email": "new_user2@test.com", "password": "pass123"}
     )
     login_data = login_response.json()
     refresh_token = login_data.get("refresh_token")

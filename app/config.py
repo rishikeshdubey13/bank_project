@@ -14,6 +14,11 @@ class Settings:
     ALGORITHM: str = os.getenv("ALGORITHM", "HS256")
     ACCESS_TOKEN_EXPIRE_MINUTES: int = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 30))
 
+    def __init__(self):
+        if not self.SECRET_KEY:
+            # This prevents the app from starting without a key
+            raise RuntimeError("SECRET_KEY environment variable is not set!")
+
     ENV: str = os.getenv("ENV", "development")
 
 

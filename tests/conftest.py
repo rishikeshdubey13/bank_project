@@ -1,5 +1,6 @@
 import pytest
 from fastapi.testclient import TestClient
+from dotenv import load_dotenv
 from app.main import app
 
 @pytest.fixture
@@ -16,3 +17,6 @@ def authorized_client(client):
     token = response.json()["access_token"]
     client.headers.update({"Authorization": f"Bearer {token}"})  
     return client
+
+
+load_dotenv(".env.test")

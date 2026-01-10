@@ -65,7 +65,7 @@ steps:
       export DB_PASSWORD=testpass
       export DB_NAME=testdb
 
-      python3 app/storage.py
+      python3 app/database.py
     displayName: Initialize database schema
 
 

@@ -1,13 +1,13 @@
 import pytest
 
-# def test_register_user(client):
-#     response = client.post(
-#         "/users/register",
-#         json={"email": "new_user1@test.com", "password": "pass123"}
-#     )
+def test_register_user(client):
+    response = client.post(
+        "/users/register",
+        json={"email": "new_user1@test.com", "password": "pass123"}
+    )
 
-#     assert response.status_code == 201
-#     assert response.json()["email"] == "new_user1@test.com"
+    assert response.status_code == 201
+    assert response.json()["email"] == "new_user1@test.com"
 
 @pytest.mark.db
 def test_login_user(client):

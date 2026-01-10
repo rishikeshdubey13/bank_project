@@ -11,7 +11,7 @@ def client():
 def authorized_client(client):
     response = client.post(
         "/users/login",
-        json = {"email": "new_user@test.com", "password": "pass123"}
+        json = {"email": "testuser", "password": "testpass"}
     )
     token = response.json()["access_token"]
     client.headers.update({"Authorization": f"Bearer {token}"})  

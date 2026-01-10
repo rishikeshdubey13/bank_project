@@ -7,29 +7,25 @@ pool:
 steps:
   - checkout: self
 
-  # - task: UsePythonVersion@0
-  #   inputs:
-  #     versionSpec: "3.10"
-  #   displayName: Use Python 3.10
   - script: |
       python3 --version
     displayName: Verify Python
 
   - script: |
       python3 -m pip install --upgrade pip
-      pip install -r requirements.txt
+      python3 -m pip install -r requirements.txt
     displayName: Install dependencies
 
 # ---UNit test ----
   - script: |
       export PYTHONPATH=$(pwd)
-      python3 -m pytest tests -v -m "not db" --junitxml=test-results.xml || true
+      python3 -m pytest tests -v -m "not db" --junitxml=unit-test-results.xml || true
     displayName: Run unit tests
 
   - task: PublishTestResults@2
     inputs:
       testResultsFormat: "JUnit"
-      testResultsFiles: "test-results.xml"
+      testResultsFiles: "unit-test-results.xml"
       testRunTitle: "Unit Tests"
       failTaskOnFailedTests: true
     displayName: Publish unit test results
@@ -39,7 +35,10 @@ steps:
       docker rm -f ci-postgres || true
     displayName: Remove existing PostgreSQL container
 
-# --- Start postgres -----
+# --- POSTGRESQL (INTEGRATION TESTS) -----
+  - script: |
+        docker rm -f ci-postgres || true
+    displayName: Remove existing PostgreSQL container
 
   - script: |
       docker run -d \
@@ -47,8 +46,7 @@ steps:
         -e POSTGRES_USER=testuser \
         -e POSTGRES_PASSWORD=testpass \
         -e POSTGRES_DB=testdb \
-        -p 5432:5432 \
-        postgres:14
+        postgres:17
     displayName: Start PostgreSQL
 
   - script: |
@@ -59,20 +57,30 @@ steps:
       done
     displayName: Wait for PostgreSQL
 
-  
+  # Initialize database schema (creates tables)
   - script: |
-      export PYTHONPATH=$(pwd)
-      export DB_HOST=localhost
+      export DB_HOST=ci-postgres
       export DB_PORT=5432
       export DB_USER=testuser
       export DB_PASSWORD=testpass
       export DB_NAME=testdb
 
-      python3 app/database.py
+      python3 app/storage.py
+    displayName: Initialize database schema
+
+
+# Run DB integration tests
+  - script: |
+      export PYTHONPATH=$(pwd)
+      export DB_HOST=ci-postgres
+      export DB_PORT=5432
+      export DB_USER=testuser
+      export DB_PASSWORD=testpass
+      export DB_NAME=testdb
+
       python3 -m pytest tests -v -m "db" --junitxml=db-test-results.xml || true
     displayName: Run DB integration tests
 
-  
   - task: PublishTestResults@2
     inputs:
       testResultsFormat: "JUnit"
@@ -83,6 +91,6 @@ steps:
   
   - script: |
       docker rm -f ci-postgres || true
-    displayName: Remove existing PostgreSQL container
+    displayName: Cleanup PostgreSQL
     condition: always()
 
